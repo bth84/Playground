@@ -142,3 +142,37 @@ function draw_cities(){
 
     });
 }
+
+d3.selectAll("#buttons button.panning")
+    .on("click",function(){
+        var distance =100;
+        var direction=d3.select(this).attr("class");
+        var x=0;
+        var y=0;
+
+        if (direction == "panning up"){
+            y +=distance;
+        }else if (direction == "panning down"){
+            y-=distance;
+        }else if (direction == "panning left"){
+            x +=distance;
+        }else if (direction == "panning right"){
+            x -=distance;
+        }
+        map.transition()
+            .call(zoom_map.translateBy,x,y);
+    });
+
+d3.selectAll("#buttons button.zooming")
+    .on("click",function(){
+        var scale =1;
+        var direction=d3.select(this).attr("class");
+
+
+        if (direction == "zooming in"){
+            scale=1.25;
+        }else if (direction == "zooming out") {
+            scale = 0.75;
+        }map.transition()
+            .call(zoom_map.scaleBy,scale);
+    });
