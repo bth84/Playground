@@ -1,0 +1,30 @@
+#chart {
+    width: 800px;
+    height: 600px;
+    background-color: #f7f7f7;
+    margin: 25px auto;
+}
+
+#buttons {
+    width: 800px;
+    margin: 25px auto;
+    text-align: center;
+}
+
+button {
+    background-color: #3587ff;
+    color: #fff;
+    width: 100px;
+    padding: 10px;
+    font-size: 20px;
+    text-align: center;
+    border: none;
+    outline: 0;
+    transition: all .2s linear;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+button:hover {
+    background-color: #50b98c;
+}
