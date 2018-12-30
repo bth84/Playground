@@ -35,9 +35,43 @@ var svg =  d3.select('#chart')
             .attr('width', dims.width)
             .attr('height', dims.height);
 
+var zoom_map=d3.zoom()
+    .scaleExtent([0.3,6])
+    .translateExtent([[-1000,-1000],[1000,1000]])
+    .on("zoom",function(){
+    // console.log(d3.event);
+    var offset=[
+        d3.event.transform.x,
+        d3.event.transform.y
+    ];
+    var scale=d3.event.transform.k*2000;
+
+    // offset[0]+=d3.event.dx;
+    // offset[1]+=d3.event.dy;
+
+    projection.translate(offset)
+        .scale(scale);
+
+    svg.selectAll("path")
+        .attr("d",path);
+    svg.selectAll("circle")
+        .attr("cx",function(d){
+            return projection([d.lon,d.lat])[0];
+        })
+        .attr("cy",function(d){
+            return projection([d.lon,d.lat])[1];
+        })
+});
+
 var map = svg.append('g')
     .attr('id', 'map')
-    .attr('cursor', 'pointer');
+    .attr('cursor', 'pointer')
+    .call(zoom_map)
+    .call(zoom_map.transform,
+        d3.zoomIdentity
+            .translate(dims.width/2,dims.width/2)
+            .scale(1)
+    );
 
 map.append('rect')
     .attr('x',0)
