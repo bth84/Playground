@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
+import os
 
 map_df = gpd.read_file('data/London_Borough_Excluding_MHW.shp')
 df = pd.read_csv('data/london-borough-profiles.csv', header=0, encoding='ISO-8859-1')
@@ -82,8 +83,44 @@ crime.columns = crime.columns.get_level_values(0)
 
 merged1 = map_df.set_index('NAME').join(df3)
 merged1 = merged1.reindex(merged1.index.rename('Borough'))
+merged1.fillna(0, inplace=True)
 
 output_path = 'charts/maps'
 i = 0
 
-#list_of_years = ['200807', '200907', '201007', '201107', '201207', '201307', '201407', '201507', '201607']
+list_of_years = ['200807', '200907', '201007', '201107', '201207', '201307', '201407', '201507', '201607']
+vmin, vmax = 200, 1200
+
+for year in list_of_years:
+    fig = merged1.plot(
+        column=year,
+        cmap='Purples',
+        figsize=(10,10),
+        linewidth=0.8,
+        edgecolor='0.8',
+        legend=True,
+        vmin=vmin,
+        vmax=vmax,
+        norm=plt.Normalize(vmin=vmin, vmax=vmax)
+    )
+
+    fig.axis('off')
+    fig.set_title('Violent Crimes in London',
+                  fontdict={
+                      'fontsize': '25',
+                      'fontweight' : '3'
+                  })
+
+    only_year = year[:4]
+    fig.annotate(
+        only_year,
+        xy=(.1, .225),
+        xycoords='figure fraction',
+        horizontalalignment='left',
+        verticalalignment='top',
+        fontsize=35
+    )
+
+    filepath = os.path.join(output_path, only_year+'_violence.png')
+    chart = fig.get_figure()
+    chart.savefig(filepath, dpi=300)
