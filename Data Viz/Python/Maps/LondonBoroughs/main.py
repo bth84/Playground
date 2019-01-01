@@ -3,8 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
 
-map_df = gpd.read_file('London_Borough_Excluding_MHW.shp')
-df = pd.read_csv('london-borough-profiles.csv', header=0, encoding='ISO-8859-1')
+map_df = gpd.read_file('data/London_Borough_Excluding_MHW.shp')
+df = pd.read_csv('data/london-borough-profiles.csv', header=0, encoding='ISO-8859-1')
 
 #column filtering, we are interested in
 df = df[['Area name',
