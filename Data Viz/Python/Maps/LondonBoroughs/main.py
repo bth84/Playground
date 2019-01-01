@@ -67,3 +67,23 @@ def plot_by(feature):
     plt.show()
 
 #plot_by(variable)
+df = pd.read_csv('data/MPS_Borough_Level_Crime_Historic.csv')
+filtered = df['Major Category'] == 'Violence Against the Person'
+violence = df[filtered]
+
+df3 = violence.groupby('Borough').sum()
+
+melted = pd.melt(violence, id_vars=['Borough', 'Major Category', 'Minor Category'])
+
+df2 = melted.groupby('Borough').sum()
+
+crime = melted.pivot_table(values='value', index=['Borough', 'Major Category'], columns='variable', aggfunc=np.sum)
+crime.columns = crime.columns.get_level_values(0)
+
+merged1 = map_df.set_index('NAME').join(df3)
+merged1 = merged1.reindex(merged1.index.rename('Borough'))
+
+output_path = 'charts/maps'
+i = 0
+
+#list_of_years = ['200807', '200907', '201007', '201107', '201207', '201307', '201407', '201507', '201607']
