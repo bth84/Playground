@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import geopandas as gpd
 import os
+import imageio
 
 map_df = gpd.read_file('data/London_Borough_Excluding_MHW.shp')
 df = pd.read_csv('data/london-borough-profiles.csv', header=0, encoding='ISO-8859-1')
@@ -90,6 +91,7 @@ i = 0
 
 list_of_years = ['200807', '200907', '201007', '201107', '201207', '201307', '201407', '201507', '201607']
 vmin, vmax = 200, 1200
+images = []
 
 for year in list_of_years:
     fig = merged1.plot(
@@ -124,3 +126,6 @@ for year in list_of_years:
     filepath = os.path.join(output_path, only_year+'_violence.png')
     chart = fig.get_figure()
     chart.savefig(filepath, dpi=300)
+    images.append(imageio.imread(filepath))
+
+imageio.mimsave('charts/gifs/london_crime.gif', images, duration=.5)
