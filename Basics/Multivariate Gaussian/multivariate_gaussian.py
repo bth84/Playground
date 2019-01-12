@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.stats import multivariate_normal
 
 # Our 2-dimensional distribution will be over variables X and Y
 N = 60
@@ -36,7 +37,11 @@ def multivariate_gaussian(pos, mu, Sigma):
     return np.exp(-fac / 2) / N
 
 # The distribution on the variables X, Y packed into pos.
-Z = multivariate_gaussian(pos, mu, Sigma)
+#Z = multivariate_gaussian(pos, mu, Sigma)
+
+#Alternative: use Scipy's new 'multivariate_normal'
+F = multivariate_normal(mu, Sigma)
+Z = F.pdf(pos)
 
 # Create a surface plot and projected filled contour plot under it.
 fig = plt.figure()
