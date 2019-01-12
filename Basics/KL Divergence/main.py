@@ -21,7 +21,7 @@ plt.fill_between(x_axis, dist_a, dist_b, where=dist_b < dist_a, facecolor='blue'
 plt.show()
 
 
-#computing first KL Differences
+#computing first KL Divergencies
 actual = np.array([.4, .6])   #actual distribution
 model1 = np.array([.2, .8])   #arbitrary different distribution
 model2 = np.array([.35, .65]) #another arbitray different distribution
