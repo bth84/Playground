@@ -38,8 +38,26 @@ var arc = d3.arc()
 
 g.selectAll('path')
     .data(root.descendants())
-    .enter().append('path')
+    .enter().append('g').attr("class", "node").append('path')
     .attr('display', function(d){ return d.depth ? null : "none";})
     .attr("d", arc)
     .style('stroke', '#fff')
     .style('fill', function(d){ return color((d.children ? d : d.parent).data.name); });
+
+g.selectAll('.node')
+    .append('text')
+    .attr('transform', function(d){ return 'translate('+arc.centroid(d) +')rotate('+ computeTextRotation(d)+ ')'; })
+    .attr('dx', '-20')
+    .attr('dy', '.5em')
+    .text(function(d){ return d.parent ? d.data.name : '' });
+
+function computeTextRotation(d) {
+    var angle = (d.x0 + d.x1) / Math.PI * 90;  // <-- 1
+
+    // Avoid upside-down labels
+    // return (angle < 90 || angle > 270) ? angle : angle + 180;  // <--2 "labels aligned with slices"
+
+    // Alternate label formatting
+    return (angle < 180) ? angle - 90 : angle + 90;  // <-- 3 "labels as spokes"
+}
+
