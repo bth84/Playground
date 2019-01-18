@@ -1,0 +1,6 @@
+office_id,postal_code,city,country
+1,93300,Paris,France
+2,13006,Marseille,France
+3,69002,Lyon,France
+4,31000,Toulouse,France
+5,58102,Fargo,USA
