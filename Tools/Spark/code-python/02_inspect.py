@@ -22,7 +22,7 @@
 # ## Create a SparkSession
 
 from pyspark.sql import SparkSession
-spark = SparkSession.builder.master("local").appName("inspect").getOrCreate()
+spark = SparkSession.builder.master("yarn").appName("inspect").getOrCreate()
 
 # **Note:** We are running Spark locally in the CDSW session engine.
 
