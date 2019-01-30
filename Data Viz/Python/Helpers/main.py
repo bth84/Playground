@@ -41,3 +41,7 @@ df_new = df_new[['invoice_num','invoice_date','stock_code','description','quanti
 
 df_new.insert(loc=2, column='year_month', value=df_new['invoice_date'].map(lambda x: 100*x.year + x.month))
 df_new.insert(loc=3, column='month', value=df_new.invoice_date.dt.month)
+df_new.insert(loc=4, column='day', value=(df_new.invoice_date.dt.dayofweek)+1)
+df_new.insert(loc=4, column='hour', value=df_new.invoice_date.dt.hour)
+
+print(df.head())
