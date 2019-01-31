@@ -82,9 +82,9 @@ trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
 dataiter = iter(trainloader)
 images, labels = dataiter.next()
 
-print(type(images))
-print(images.shape)
-print(labels.shape)
+# print(type(images))
+# print(images.shape)
+# print(labels.shape)
 
 plt.imshow(images[1].numpy().squeeze(), cmap='Greys_r');
 plt.show()
@@ -114,3 +114,52 @@ probabilities = softmax(out)
 #print(probabilities.sum(dim=1))
 
 
+
+#_______________real nn Module__________________________#
+from torch import nn
+
+class Network(nn.Module):
+    def __init__(self):
+        super().__init__()
+
+        #Inputs to hidden layer linear transformation
+        self.hidden = nn.Linear(784, 256)
+
+        #Output layer, 10 units - one for each unit
+        self.output = nn.Linear(256,10)
+
+        self.sigmoid = nn.Sigmoid()
+        self.softmax = nn.Softmax(dim=1)
+
+    def forward(self, x):
+        #Pass the input tensor through each of our operations
+
+        x = self.hidden(x)
+        x = self.sigmoid(x)
+        x = self.output(x)
+        x = self.softmax(x)
+
+        return x
+
+model = Network()
+#print(model)
+
+
+
+#_______cleaner code in torch_______#
+import torch.nn.functional as F
+
+class Network(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.input = nn.Linear(784,256)
+        self.output = nn.Linear(256,10)
+
+    def forward(self, x):
+        x = F.sigmoid(self.hidden(x))
+        x = F.softmax(self.output(x), dim=1)
+
+        return x
+
+model = Network()
+#print(model)
