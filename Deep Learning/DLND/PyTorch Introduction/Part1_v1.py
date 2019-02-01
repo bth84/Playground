@@ -245,4 +245,36 @@ images, labels = next(iter(trainloader))
 images = images.view(images.shape[0], -1)
 logits = model(images)
 loss = criterion(logits, labels)
-print(loss)
+#print(loss)
+
+
+#_____Optimizer_____#
+from torch import optim
+
+optimizer = optim.SGD(model.parameters(), lr=.01)
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Linear(256,64),
+    nn.ReLU(),
+    nn.Linear(64,10),
+    nn.LogSoftmax(dim=1)
+)
+criterion = nn.NLLLoss()
+images, labels = next(iter(trainloader))
+images = images.view(images.shape[0], -1)
+
+#clear the gradients, do this because gradients are accumulated
+optimizer.zero_grad()
+#logits = model(images)
+
+#Forward pass, then backward pass, then update weights
+output = model.forward(images)
+loss = criterion(output, labels)
+loss.backward()
+
+print('Gradient -', model[0].weight.grad)
+
+#Take an update step and few the new weights
+optimizer.step()
+print('Updated weights -', model[0].weight)
