@@ -183,4 +183,46 @@ class Network(nn.Module):
         return x
 
 model = Network()
-print(model)
+#print(model)
+
+
+#_______Training_______#
+
+#Define a transform to normalize the data
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((.5,.5,.5),(.5,.5,.5))
+])
+
+#Download and load the training data
+trainset = datasets.MNIST('~/.pytorch/MNIST_data/',
+                          download=True,
+                          transform=transform,
+                          train=True,
+                          )
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
+
+#Build the Feedforward Network
+model = nn.Sequential(
+    nn.Linear(784,256),
+    nn.ReLU(),
+    nn.Linear(256,64),
+    nn.ReLU(),
+    nn.Linear(64,10)
+)
+
+#Define the loss
+criterion = nn.CrossEntropyLoss()
+
+#Get our data
+images, labels = next(iter(trainloader))
+#flatten images
+images = images.view(images.shape[0], -1)
+
+#Forward pass, get our logits
+logits = model(images)
+
+#Calculate the loss with the logits and labels
+loss = criterion(logits, labels)
+
+print(loss)
