@@ -86,8 +86,8 @@ images, labels = dataiter.next()
 # print(images.shape)
 # print(labels.shape)
 
-plt.imshow(images[1].numpy().squeeze(), cmap='Greys_r');
-plt.show()
+#plt.imshow(images[1].numpy().squeeze(), cmap='Greys_r');
+#plt.show()
 
 def activation(x):
     return 1 / (1 + torch.exp(-x))
@@ -225,4 +225,24 @@ logits = model(images)
 #Calculate the loss with the logits and labels
 loss = criterion(logits, labels)
 
+#print(loss)
+
+
+
+#_______Exercise_______#
+#Use log softmax as output activation function
+
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Linear(256,64),
+    nn.ReLU(),
+    nn.Linear(64,10),
+    nn.LogSoftmax(dim=1)
+)
+criterion = nn.NLLLoss()
+images, labels = next(iter(trainloader))
+images = images.view(images.shape[0], -1)
+logits = model(images)
+loss = criterion(logits, labels)
 print(loss)
