@@ -273,8 +273,49 @@ output = model.forward(images)
 loss = criterion(output, labels)
 loss.backward()
 
-print('Gradient -', model[0].weight.grad)
+#print('Gradient -', model[0].weight.grad)
 
 #Take an update step and few the new weights
 optimizer.step()
-print('Updated weights -', model[0].weight)
+#print('Updated weights -', model[0].weight)
+
+
+
+#____ Epochs_____#
+#Download and load the training data
+trainset = datasets.MNIST('~/.pytorch/MNIST_data/',
+                          download=True,
+                          transform=transform,
+                          train=True,
+                          )
+trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
+
+model = nn.Sequential(
+    nn.Linear(784, 256),
+    nn.ReLU(),
+    nn.Linear(256,64),
+    nn.ReLU(),
+    nn.Linear(64,10),
+    nn.LogSoftmax(dim=1)
+)
+optimizer = optim.SGD(model.parameters(), lr=.003)
+criterion = nn.NLLLoss()
+
+epochs = 5
+for e in range(epochs):
+    running_loss = 0
+    for images, labels in trainloader:
+        #flatten images into 784 long vectors
+        images = images.view(images.shape[0], -1)
+
+        #zero_grad!
+        optimizer.zero_grad()
+
+        output = model.forward(images)
+        loss = criterion(output, labels)
+        loss.backward()
+        optimizer.step()
+
+        running_loss += loss.item()
+    else:
+        print(f"Training loss: {running_loss/len(trainloader)}")
