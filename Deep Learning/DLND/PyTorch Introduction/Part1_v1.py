@@ -1,4 +1,5 @@
 import torch
+import matplotlib.pyplot as plt
 
 def activation(x):
     """
@@ -333,6 +334,7 @@ epochs = 5
 #print(ps)
 
 #_____Fashion Mnist______#
+import helper
 
 trainset = datasets.FashionMNIST('~/.pytorch/MNIST_data/', download=True, transform=transform, train=True,)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
@@ -355,9 +357,9 @@ class Classifier(nn.Module):
         #make sure, tensor is flattened
         x = x.view(x.shape[0], -1)
 
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = F.relu(self.fc3(x))
+        x = self.dropout(F.relu(self.fc1(x)))
+        x = self.dropout(F.relu(self.fc2(x)))
+        x = self.dropout(F.relu(self.fc3(x)))
         x = F.log_softmax(self.fc4(x), dim=1)
 
         return x
@@ -403,3 +405,7 @@ for e in range(epochs):
               "Training Loss: {:.3f}..".format(running_loss/len(trainloader)),
               "Test loss: {:.3f}..".format(test_loss/len(testloader)),
               "Test accuracy: {:.3f}".format(accuracy/len(testloader)))
+
+plt.plot(train_losses, label='Training loss')
+plt.plot(test_losses, label='Validation loss')
+plt.legend(frameon=False)
