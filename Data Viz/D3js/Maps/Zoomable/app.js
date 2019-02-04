@@ -98,7 +98,7 @@ d3.json('zombie-attacks.json').then(function(zombie_data,error){
                }
                us_data.features[us_i].properties.num=parseFloat(z_e.num);
            })
-       })
+       });
 
         console.log(us_data);
 

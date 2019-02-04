@@ -1,5 +1,4 @@
 import torch
-import matplotlib.pyplot as plt
 
 def activation(x):
     """
@@ -336,7 +335,7 @@ epochs = 5
 #_____Fashion Mnist______#
 import helper
 
-trainset = datasets.FashionMNIST('~/.pytorch/MNIST_data/', download=True, transform=transform, train=True,)
+trainset = datasets.FashionMNIST('~/.pytorch/F_MNIST_data/', download=True, transform=transform, train=True,)
 trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
 
 # Download and load the test data
@@ -374,11 +373,12 @@ step = 0
 train_losses, test_losses = [], []
 for e in range(epochs):
     running_loss = 0
-    for images, labels in trainloader:
-        logps = model(images)
-        loss = criterion(logps, labels)
 
+    for images, labels in trainloader:
         optimizer.zero_grad()
+
+        log_ps = model(images)
+        loss = criterion(log_ps, labels)
         loss.backward()
         optimizer.step()
 
@@ -386,9 +386,10 @@ for e in range(epochs):
     else:
         test_loss = 0
         accuracy = 0
-        print(f"Training loss: {running_loss}")
 
+        #Turn off gradients for validation, saves memory and computation
         with torch.no_grad():
+            model.eval()
             for images, labels in testloader:
                 log_ps = model(images)
                 test_loss += criterion(log_ps, labels)
@@ -398,7 +399,9 @@ for e in range(epochs):
                 equals = top_class == labels.view(*top_class.shape)
                 accuracy += torch.mean(equals.type(torch.FloatTensor))
 
-        train_losses.append(test_loss/len(trainloader))
+        model.train()
+
+        train_losses.append(running_loss/len(trainloader))
         test_losses.append(test_loss/len(testloader))
 
         print("Epoch: {}/{}..".format(e+1, epochs),
@@ -409,3 +412,4 @@ for e in range(epochs):
 plt.plot(train_losses, label='Training loss')
 plt.plot(test_losses, label='Validation loss')
 plt.legend(frameon=False)
+plt.show()
