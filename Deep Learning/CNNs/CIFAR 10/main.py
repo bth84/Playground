@@ -2,6 +2,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 from torchvision import datasets
+from torchvision import transforms
 
 class Net(nn.Module):
     def __init__(self):
@@ -44,3 +45,17 @@ class Net(nn.Module):
         x = self.fc2(x)
 
         return x
+
+batch_size = 20
+valid_size = .2
+
+transform = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize((.5,.5,.5),(.5,.5,.5))
+])
+
+# fetch and store CIFAR 10
+train_data = datasets.CIFAR10('data', train=True,
+                              download=True, transform=transform)
+test_data = datasets.CIFAR10('data', train=False,
+                             download=True, transform=transform)
