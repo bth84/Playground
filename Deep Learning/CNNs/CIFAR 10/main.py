@@ -42,3 +42,5 @@ class Net(nn.Module):
         #both classifier layers with relu activation and first one with dropout
         x = self.dropout(F.relu(self.fc1(x)))
         x = self.fc2(x)
+
+        return x
