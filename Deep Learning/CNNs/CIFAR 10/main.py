@@ -80,6 +80,7 @@ test_sampler = SubsetRandomSampler(valid_idx)
 # prepare data loaders (combine dataset and sampler)
 train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sampler=train_sampler)
 valid_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sampler=test_sampler)
+test_loader = torch.utils.data.DataLoader(test_data, batch_size=batch_size)
 
 # image classes
 classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
@@ -166,9 +167,6 @@ class_total = list(0. for i in range(10))
 model.eval()
 # iterate over test data
 for data, target in test_loader:
-    # move tensors to GPU if CUDA is available
-    if train_on_gpu:
-        data, target = data.cuda(), target.cuda()
     # forward pass: compute predicted outputs by passing inputs to the model
     output = model(data)
     # calculate the batch loss
@@ -179,7 +177,7 @@ for data, target in test_loader:
     _, pred = torch.max(output, 1)
     # compare predictions to true label
     correct_tensor = pred.eq(target.data.view_as(pred))
-    correct = np.squeeze(correct_tensor.numpy()) if not train_on_gpu else np.squeeze(correct_tensor.cpu().numpy())
+    correct = np.squeeze(correct_tensor.numpy())
     # calculate test accuracy for each object class
     for i in range(batch_size):
         label = target.data[i]
