@@ -214,7 +214,13 @@ images.numpy()
 output = model(images)
 # convert output probabilities to predicted class
 _, preds_tensor = torch.max(output, 1)
-preds = np.squeeze(preds_tensor.numpy()) if not train_on_gpu else np.squeeze(preds_tensor.cpu().numpy())
+preds = np.squeeze(preds_tensor.numpy())
+
+
+# helper function to un-normalize and display an image
+def imshow(img):
+    img = img / 2 + 0.5  # unnormalize
+    plt.imshow(np.transpose(img, (1, 2, 0)))  # convert from Tensor image
 
 # plot the images in the batch, along with predicted and true labels
 fig = plt.figure(figsize=(25, 4))
