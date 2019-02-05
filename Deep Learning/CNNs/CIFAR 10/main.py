@@ -8,6 +8,8 @@ from torch.utils.data.sampler import SubsetRandomSampler
 from torchvision import datasets
 from torchvision import transforms
 
+from pathlib import Path
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -98,54 +100,59 @@ n_epochs = 30
 #Track change in validation loss
 valid_loss_min = np.Inf
 
-for epoch in range(n_epochs):
-    train_loss = 0.0
-    valid_loss = 0.0
+model_file = Path("model_cifar.pt")
+if not model_file.is_file():
+    for epoch in range(n_epochs):
+        train_loss = 0.0
+        valid_loss = 0.0
 
-    ###################
-    # train the model #
-    ###################
-    model.train()
+        ###################
+        # train the model #
+        ###################
+        model.train()
 
-    for data, labels in train_loader:
-        #clear the gradients of all optimized variables
-        optimizer.zero_grad()
+        for data, labels in train_loader:
+            # clear the gradients of all optimized variables
+            optimizer.zero_grad()
 
-        #forward pass: compute predicted outputs by passing inputs to the model
-        output = model(data)
+            # forward pass: compute predicted outputs by passing inputs to the model
+            output = model(data)
 
-        #calculate the batch loss
-        loss = criterion(output, labels)
+            # calculate the batch loss
+            loss = criterion(output, labels)
 
-        #backward pass: compute gradients of the loss with respect to model parameters
-        loss.backward()
+            # backward pass: compute gradients of the loss with respect to model parameters
+            loss.backward()
 
-        #perform a single optimization step (parameter update)
-        optimizer.step()
+            # perform a single optimization step (parameter update)
+            optimizer.step()
 
-        #update training loss
-        train_loss += loss.item() * data.size(0)
+            # update training loss
+            train_loss += loss.item() * data.size(0)
 
-    ######################
-    # validate the model #
-    ######################
-    model.eval()
-    for data, label in valid_loader:
-        output = model(data)
-        loss = criterion(output, label)
-        valid_loss += loss.item() * data.size(0)
+        ######################
+        # validate the model #
+        ######################
+        model.eval()
+        for data, label in valid_loader:
+            output = model(data)
+            loss = criterion(output, label)
+            valid_loss += loss.item() * data.size(0)
 
-    train_loss = train_loss / len(train_loader)
-    valid_loss = valid_loss / len(valid_loader)
+        train_loss = train_loss / len(train_loader)
+        valid_loss = valid_loss / len(valid_loader)
 
-    print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
-        epoch, train_loss, valid_loss
-    ))
+        print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
+            epoch, train_loss, valid_loss
+        ))
 
-    # save model if validation loss has decreased
-    if valid_loss <= valid_loss_min:
-        print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
-            valid_loss_min,
-            valid_loss))
-        torch.save(model.state_dict(), 'model_cifar.pt')
-        valid_loss_min = valid_loss
+        # save model if validation loss has decreased
+        if valid_loss <= valid_loss_min:
+            print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
+                valid_loss_min,
+                valid_loss))
+            torch.save(model.state_dict(), 'model_cifar.pt')
+            valid_loss_min = valid_loss
+
+# after the epochs have been computed, load the best validated model
+model.load_state_dict(torch.load('model_cifar.pt'))
