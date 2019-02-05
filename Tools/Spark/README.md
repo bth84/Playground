@@ -1,3 +1,3 @@
-# Cloudera Data Scientist Training
-
-This project contains the demonstration and exercise files for *Cloudera Data Scientist Training*, a four-day workshop covering data science and machine learning workflows at scale using Apache Spark 2 and other key components of the Hadoop ecosystem.
+version https://git-lfs.github.com/spec/v1
+oid sha256:49ce18d8a5e7800105d9efe6ec8ac1037b232f1886db4bfd7b38fc72b47d8f19
+size 288

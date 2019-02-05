@@ -1,6 +1,3 @@
-# A draggable / zoomable map
-
-used 
-- [this](https://medium.com/@shengyuchen/how-to-create-a-draggable-zoomable-map-in-d3-js-part-i-764e2a089e85) explanations 
-and 
-- code is uploaded [by himself](https://github.com/schen57/mapdemo)
+version https://git-lfs.github.com/spec/v1
+oid sha256:c847e8dc64fd5cee7d1bfe1a28d6924ed81a9aaf5c288bff1e51c8f5369ed2b5
+size 233

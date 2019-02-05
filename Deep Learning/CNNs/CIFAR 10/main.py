@@ -1,8 +1,13 @@
+import numpy as np
 import torch
 import torch.nn.functional as F
+import torch.optim as optim
+
 from torch import nn
+from torch.utils.data.sampler import SubsetRandomSampler
 from torchvision import datasets
 from torchvision import transforms
+
 
 class Net(nn.Module):
     def __init__(self):
@@ -59,3 +64,88 @@ train_data = datasets.CIFAR10('data', train=True,
                               download=True, transform=transform)
 test_data = datasets.CIFAR10('data', train=False,
                              download=True, transform=transform)
+
+
+#obtain training indices that will be used for validation
+num_train = len(train_data)
+indices = list(range(num_train))
+np.random.shuffle(indices)
+split = int(np.floor(valid_size * num_train))
+train_idx, valid_idx = indices[split:], indices[:split]
+
+#samplers for obtaining training and validation batches
+train_sampler = SubsetRandomSampler(train_idx)
+test_sampler = SubsetRandomSampler(valid_idx)
+
+#prepare data loaders (combine dataset and sampler)
+train_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sampler=train_sampler)
+valid_loader = torch.utils.data.DataLoader(train_data, batch_size=batch_size, sampler=test_sampler)
+
+#image classes
+classes = ['airplane', 'automobile', 'bird', 'cat', 'deer',
+           'dog', 'frog', 'horse', 'ship', 'truck']
+
+
+#____Modelling____
+model = Net()
+print(model)
+
+criterion = nn.CrossEntropyLoss()
+optimizer = optim.SGD(model.parameters(), lr=.01)
+
+n_epochs = 30
+
+#Track change in validation loss
+valid_loss_min = np.Inf
+
+for epoch in range(n_epochs):
+    train_loss = 0.0
+    valid_loss = 0.0
+
+    ###################
+    # train the model #
+    ###################
+    model.train()
+
+    for data, labels in train_loader:
+        #clear the gradients of all optimized variables
+        optimizer.zero_grad()
+
+        #forward pass: compute predicted outputs by passing inputs to the model
+        output = model(data)
+
+        #calculate the batch loss
+        loss = criterion(output, labels)
+
+        #backward pass: compute gradients of the loss with respect to model parameters
+        loss.backward()
+
+        #perform a single optimization step (parameter update)
+        optimizer.step()
+
+        #update training loss
+        train_loss += loss.item() * data.size(0)
+
+    ######################
+    # validate the model #
+    ######################
+    model.eval()
+    for data, label in valid_loader:
+        output = model(data)
+        loss = criterion(output, label)
+        valid_loss += loss.item() * data.size(0)
+
+    train_loss = train_loss / len(train_loader)
+    valid_loss = valid_loss / len(valid_loader)
+
+    print('Epoch: {} \tTraining Loss: {:.6f} \tValidation Loss: {:.6f}'.format(
+        epoch, train_loss, valid_loss
+    ))
+
+    # save model if validation loss has decreased
+    if valid_loss <= valid_loss_min:
+        print('Validation loss decreased ({:.6f} --> {:.6f}).  Saving model ...'.format(
+            valid_loss_min,
+            valid_loss))
+        torch.save(model.state_dict(), 'model_cifar.pt')
+        valid_loss_min = valid_loss
