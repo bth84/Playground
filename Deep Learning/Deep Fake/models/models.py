@@ -11,7 +11,7 @@ def create_model(opt):
         model = RecycleGANModel()
     elif opt.model == 'reCycle_gan':
         assert(opt.dataset_mode == 'unaligned_triplet')
-        from .reCycle_gan_model import ReCycleGANModel
+        from .BAK_reCycle_gan_model import ReCycleGANModel
         model = ReCycleGANModel()
     else:
         raise ValueError("Model [%s] not recognized." % opt.model)
