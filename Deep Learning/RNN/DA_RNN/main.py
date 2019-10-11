@@ -7,7 +7,7 @@ import torch
 from torch import nn
 from torch import optim
 from sklearn.preprocessing import StandardScaler
-from sklearn.externals import joblib
+import joblib
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -141,6 +141,8 @@ def train_iteration(t_net: DaRnnNet, loss_func: typing.Callable, X, y_history, y
     t_net.dec_opt.zero_grad()
 
     input_weighted, input_encoded = t_net.encoder(numpy_to_tvar(X))
+    input_weighted = input_weighted.to(device)
+    input_encoded = input_encoded.to(device)
     y_pred = t_net.decoder(input_encoded, numpy_to_tvar(y_history))
 
     y_true = numpy_to_tvar(y_target)
@@ -176,8 +178,9 @@ def predict(t_net: DaRnnNet, t_dat: TrainData, train_size: int, batch_size: int,
             X[b_i, :, :] = t_dat.feats[idx, :]
             y_history[b_i, :] = t_dat.targs[idx]
 
-        y_history = numpy_to_tvar(y_history)
+        y_history = numpy_to_tvar(y_history).to(device)
         _, input_encoded = t_net.encoder(numpy_to_tvar(X))
+        input_encoded = input_encoded.to(device)
         y_pred[y_slc] = t_net.decoder(input_encoded, y_history).cpu().data.numpy()
 
     return y_pred
@@ -191,9 +194,9 @@ logger.info(f"Shape of data: {raw_data.shape}.\nMissing in data: {raw_data.isnul
 targ_cols = ("NDX",)
 data, scaler = preprocess_data(raw_data, targ_cols)
 
-da_rnn_kwargs = {"batch_size": 128, "T": 10}
+da_rnn_kwargs = {"batch_size": 128, "T": 30}
 config, model = da_rnn(data, n_targs=len(targ_cols), learning_rate=.001, **da_rnn_kwargs)
-iter_loss, epoch_loss = train(model, data, config, n_epochs=10, save_plots=save_plots)
+iter_loss, epoch_loss = train(model, data, config, n_epochs=20, save_plots=save_plots)
 final_y_pred = predict(model, data, config.train_size, config.batch_size, config.T)
 
 plt.figure()
