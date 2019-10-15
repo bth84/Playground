@@ -7,6 +7,7 @@ from torchvision import datasets, models, transforms
 import torch.nn as nn
 from torch.nn import functional as F
 import torch.optim as optim
+import mlflow
 
 
 
@@ -73,6 +74,8 @@ optimizer = optim.Adam(params=model.fc.parameters())
 # train the model
 # ---------------
 def train_model(model, criterion, optimizer, num_epochs=3):
+    loss = 10.
+    acc = 0.
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch + 1, num_epochs))
         print('-' * 10)
@@ -108,17 +111,23 @@ def train_model(model, criterion, optimizer, num_epochs=3):
             print('{} loss: {:.4f}, acc: {:.4f}'.format(phase,
                                                         epoch_loss.item(),
                                                         epoch_acc.item()))
+            loss = min(loss, epoch_loss.item())
+            acc = max(acc, epoch_acc.item())
+
+    mlflow.log_param("Epochs", num_epochs)
+    mlflow.log_metric("Loss", loss)
+    mlflow.log_metric("Accuracy", acc)
     return model
 
 
 
 if __name__ == '__main__':
-    # model_trained = train_model(model, criterion, optimizer, num_epochs=5)
+    model_trained = train_model(model, criterion, optimizer, num_epochs=5)
 
     # -----------------------
     # save and load the model
     # -----------------------
-    # torch.save(model_trained.state_dict(), 'models/pytorch/weights.h5')
+    torch.save(model_trained.state_dict(), 'models/pytorch/weights.h5')
     model = models.resnet50(pretrained=False).to(device)
     model.fc = nn.Sequential(
         nn.Linear(2048, 128),
@@ -154,4 +163,6 @@ if __name__ == '__main__':
                                                               100 * pred_probs[i, 1]))
         ax.imshow(img)
 
+    fig.savefig('images/output/predicts.png')
+    mlflow.log_artifact('images/output/predicts.png')
     plt.show()
