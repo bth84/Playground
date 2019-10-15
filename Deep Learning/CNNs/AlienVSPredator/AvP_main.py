@@ -8,6 +8,9 @@ import torch.nn as nn
 from torch.nn import functional as F
 import torch.optim as optim
 
+#---------------
+#data generators
+#---------------
 normalize = transforms.Normalize(mean=[.485, .456, .406], std=[.229, .224, .225])
 
 data_transforms = {
@@ -23,6 +26,22 @@ data_transforms = {
         transforms.ToTensor(),
         transforms.normalize
     ])
+}
+
+image_datasets = {
+    'train': datasets.ImageFolder('data/train', transforms=data_transforms['train']),
+    'validation': datasets.ImageFolder('data/validation', transforms=data_transforms['validation'])
+}
+
+data_loaders = {
+    'train': torch.utils.data.DataLoader(image_datasets['train'],
+                                         batch_size=32,
+                                         shuffle=True,
+                                         num_workers=4),
+    'validation': torch.utils.DataLoader(image_datasets['validation'],
+                                         batch_size=32,
+                                         shuffle=True,
+                                         num_workers=4)
 }
 
 
