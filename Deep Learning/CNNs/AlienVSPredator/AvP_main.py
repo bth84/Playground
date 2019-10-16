@@ -9,6 +9,9 @@ from torch.nn import functional as F
 import torch.optim as optim
 import mlflow
 
+import warnings
+warnings.filterwarnings("ignore")
+
 
 
 
@@ -122,7 +125,10 @@ def train_model(model, criterion, optimizer, num_epochs=3):
 
 
 if __name__ == '__main__':
-    model_trained = train_model(model, criterion, optimizer, num_epochs=5)
+
+    mlflow.set_experiment("The one true project")
+    mlflow.start_run()
+    model_trained = train_model(model, criterion, optimizer, num_epochs=3)
 
     # -----------------------
     # save and load the model
