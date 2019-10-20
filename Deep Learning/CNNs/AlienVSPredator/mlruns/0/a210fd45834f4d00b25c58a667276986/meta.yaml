@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Repos/Tutorials/Deep%20Learning/CNNs/AlienVSPredator/mlruns/0/a210fd45834f4d00b25c58a667276986/artifacts
+end_time: 1571258544992
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: a210fd45834f4d00b25c58a667276986
+run_uuid: a210fd45834f4d00b25c58a667276986
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1571258075985
+status: 3
+tags: []
+user_id: Ben
